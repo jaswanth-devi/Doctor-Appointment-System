@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePoint - Doctor Appointment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <h2 class="logo">CarePoint+</h2>
+
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#doctors">Doctors</a>
+                <a href="#booking">Book Appointment</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Your Health, Our Priority.</h1>
+            <p>
+                Book appointments with experienced doctors
+                easily and get the care you deserve.
+            </p>
+            <a href="#doctors" class="btn">Find a Doctor</a>
+        </div>
+    </section>
+
+    <section class="doctors" id="doctors">
+        <h2>Our Specialist Doctors</h2>
+        <p class="section-desc">
+            Choose the right specialist for your health.
+        </p>
+
+        <div class="doctor-container">
+
+            <div class="doctor-card">
+                <div class="doctor-icon">👨‍⚕️</div>
+                <h3>Dr. Arun Kumar</h3>
+                <p>Cardiologist</p>
+                <p>Experience: 10 Years</p>
+                <button onclick="selectDoctor('Dr. Arun Kumar')">
+                    Book Appointment
+                </button>
+            </div>
+
+            <div class="doctor-card">
+                <div class="doctor-icon">👩‍⚕️</div>
+                <h3>Dr. Priya Sharma</h3>
+                <p>Dermatologist</p>
+                <p>Experience: 8 Years</p>
+                <button onclick="selectDoctor('Dr. Priya Sharma')">
+                    Book Appointment
+                </button>
+            </div>
+
+            <div class="doctor-card">
+                <div class="doctor-icon">👨‍⚕️</div>
+                <h3>Dr. Rahul Verma</h3>
+                <p>Neurologist</p>
+                <p>Experience: 12 Years</p>
+                <button onclick="selectDoctor('Dr. Rahul Verma')">
+                    Book Appointment
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="booking" id="booking">
+        <h2>Book Your Appointment</h2>
+
+        <form id="appointmentForm">
+
+            <input type="text" id="patientName"
+                placeholder="Patient Name" required>
+
+            <input type="email" id="email"
+                placeholder="Email Address" required>
+
+            <input type="tel" id="phone"
+                placeholder="Phone Number"
+                pattern="[0-9]{10}" required>
+
+            <select id="doctor" required>
+                <option value="">Select Doctor</option>
+                <option>Dr. Arun Kumar</option>
+                <option>Dr. Priya Sharma</option>
+                <option>Dr. Rahul Verma</option>
+            </select>
+
+            <input type="date" id="date" required>
+
+            <select id="time" required>
+                <option value="">Select Time</option>
+                <option>09:00 AM</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>02:00 PM</option>
+                <option>03:00 PM</option>
+                <option>04:00 PM</option>
+            </select>
+
+            <textarea id="reason"
+                placeholder="Reason for appointment"></textarea>
+
+            <button type="submit" class="submit-btn">
+                Confirm Appointment
+            </button>
+
+        </form>
+    </section>
+
+    <section class="appointments">
+        <h2>My Appointments</h2>
+        <div id="appointmentList">
+            <p>No appointments booked yet.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 CarePoint+. All Rights Reserved.</p>
+        <p>Your Health, Our Priority.</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

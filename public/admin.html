@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarePoint+ Admin Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #263445;
+        }
+
+        header {
+            background: #087f8c;
+            color: white;
+            padding: 22px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 35px 6%;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #087f8c;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .stat-card h3 {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .stat-card p {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 12px;
+            color: #087f8c;
+        }
+
+        .table-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .search {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d5e0e8;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #eaf5f7;
+            color: #087f8c;
+        }
+
+        .cancel-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 9px 13px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn:hover {
+            background: #b52a37;
+        }
+
+        @media(max-width: 700px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2 style="color:white; margin:0;">CarePoint+ Admin</h2>
+        <a href="/">Back to Website</a>
+    </header>
+
+    <main class="container">
+
+        <h2>Admin Dashboard</h2>
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <h3>Total Appointments</h3>
+                <p id="totalAppointments">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Doctors</h3>
+                <p id="totalDoctors">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Unique Patients</h3>
+                <p id="totalPatients">0</p>
+            </div>
+
+        </section>
+
+        <section class="table-section">
+
+            <h2>Appointment Management</h2>
+
+            <input
+                type="text"
+                class="search"
+                id="search"
+                placeholder="Search patient, doctor or date..."
+            >
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Phone</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="appointmentTable">
+                    <tr>
+                        <td colspan="7">Loading appointments...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+    </main>
+
+    <script>
+        let appointments = [];
+
+        async function loadDashboard() {
+
+            try {
+
+                const response = await fetch("/api/appointments");
+
+                if (!response.ok) {
+                    throw new Error("Unable to load appointments");
+                }
+
+                appointments = await response.json();
+
+                document.getElementById("totalAppointments").textContent =
+                    appointments.length;
+
+                const doctors = new Set(
+                    appointments.map(item => item.doctor)
+                );
+
+                const patients = new Set(
+                    appointments.map(item => item.email.toLowerCase())
+                );
+
+                document.getElementById("totalDoctors").textContent =
+                    doctors.size;
+
+                document.getElementById("totalPatients").textContent =
+                    patients.size;
+
+                displayAppointments(appointments);
+
+            } catch (error) {
+
+                document.getElementById("appointmentTable").innerHTML =
+                    "<tr><td colspan='7'>Unable to load appointments.</td></tr>";
+
+                console.error(error);
+            }
+        }
+
+        function displayAppointments(data) {
+
+            const table = document.getElementById("appointmentTable");
+
+            table.innerHTML = "";
+
+            if (data.length === 0) {
+                table.innerHTML =
+                    "<tr><td colspan='7'>No appointments found.</td></tr>";
+                return;
+            }
+
+            data.forEach(item => {
+
+                const row = document.createElement("tr");
+
+                const values = [
+                    item.id,
+                    item.patientName,
+                    item.phone,
+                    item.doctor,
+                    item.date,
+                    item.time
+                ];
+
+                values.forEach(value => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+                const actionCell = document.createElement("td");
+                const button = document.createElement("button");
+
+                button.textContent = "Cancel";
+                button.className = "cancel-btn";
+
+                button.addEventListener("click", () => {
+                    cancelAppointment(item.id);
+                });
+
+                actionCell.appendChild(button);
+                row.appendChild(actionCell);
+
+                table.appendChild(row);
+
+            });
+        }
+
+        document.getElementById("search").addEventListener(
+            "input",
+            function() {
+
+                const searchText = this.value.toLowerCase();
+
+                const filtered = appointments.filter(item =>
+                    item.patientName.toLowerCase().includes(searchText) ||
+                    item.doctor.toLowerCase().includes(searchText) ||
+                    item.date.includes(searchText)
+                );
+
+                displayAppointments(filtered);
+            }
+        );
+
+        async function cancelAppointment(id) {
+
+            if (!confirm("Cancel this appointment?")) return;
+
+            try {
+
+                const response = await fetch(
+                    "/api/appointments/" + encodeURIComponent(id),
+                    { method: "DELETE" }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message);
+                }
+
+                alert("Appointment cancelled successfully!");
+
+                loadDashboard();
+
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        loadDashboard();
+    </script>
+
+</body>
+</html>
